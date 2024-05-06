@@ -1,7 +1,7 @@
 -- All code within the project should be contained 
 -- in a single PHP file including CSS and JS, (excluding images)
 
-CREATE DATABASE IF not exists second_db;
+CREATE DATABASE IF not exists mydatabase;
 
 CREATE Table users(
     id INT NOTNULL PRIMARY KEY AUTO_INCREMENT,
