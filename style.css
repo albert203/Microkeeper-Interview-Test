@@ -4,9 +4,6 @@
   box-sizing: border-box;
 }
 
-.outer-container {
-}
-
 h1 {
   margin-bottom: 20px;
 }
@@ -24,3 +21,4 @@ aside {
   display: flex;
   justify-content: end;
 }
+
