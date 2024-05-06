@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.outer-container {
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+aside {
+  padding: 100px;
+  border: solid 1px #000;
+}
+
+.span-container {
+  display: flex;
+}
+
+.span {
+  display: flex;
+  justify-content: end;
+}
