@@ -49,21 +49,75 @@
     </div>
 
     <?php
+        
+
         // db connection
         $host = 'localhost';
-        $dbname = 'myfirstdatabase';
+        $dbname = 'mydatabase';
         $dbusername = 'root';
-        $dbpasword = 'password';
+        $dbpassword = 'password';
 
         try {
-            $dbo = new PDO('mysql:host=$host;dbname=$databasename', $dbusername, $dbpasword);
+            $dbo = new PDO("mysql:host=$host", $dbusername, $dbpassword);
             $dbo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
         } catch (PDOException $e){
+            echo 'First Connection failed: ';
             echo 'Connection failed: ' . $e->getMessage();
         }
 
+        // Create a database using php
+        $queryDb = "CREATE DATABASE IF NOT exists mydatabase";
+
+        // Prepare to prevent SQL injection
+        $sqlDb = $dbo->prepare($queryDb);
+
+        // Execute the query
+        $sqlDb->execute();
+
+        // Reconnect with the newly created mydatabase
+        $dbo = new PDO("mysql:host=$host;dbname=mydatabase", $dbusername, $dbpassword);
+        $dbo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
+        // Create a table
+        $queryTable = "CREATE TABLE IF NOT EXISTS users(
+            id INT(6) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            email VARCHAR(255) NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+
+        $sqlTable = $dbo->prepare($queryTable);
+
+        $sqlTable->execute();
+
+
+        // Create three users
+        $queryUserOne= "INSERT INTO users (email, password) VALUES ('johndoe@gmail', 'john1234')";
+        $queryUserTwo= "INSERT INTO users (email, password) VALUES ('testuser@gmail.com', 'test1234')";
+        $queryUserThree= "INSERT INTO users (email, password) VALUES ('Janedoe@gmail.com', 'Jane1234')";
+
+        $users = [$queryUserOne, $queryUserTwo, $queryUserThree];
+
+        
+        // need to also verify the user is not already in the database 
+        // to prevent duplication
+        foreach ($users as $user) {
+            try{
+                $userPrepared = $dbo->prepare($user);
+                try{
+                    $userPrepared->execute();
+                } catch(PDOException $e){
+                    echo "Error:execute users failed";
+                    echo $e->getMessage();
+                }
+            } catch(PDOException $e){
+                echo "Error:prepare and execute users failed";
+                echo $e->getMessage();
+            }
+        }
+        
         // gets the form data
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $email = $_POST['email'];
