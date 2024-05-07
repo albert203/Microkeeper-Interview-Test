@@ -26,7 +26,7 @@
                 <form class="form" action="post">
                     <ul class ="inputs-container" style="list-style-type: none; font-size:1em;">
                         <label for="email">Email</label>
-                        <li class="border">
+                        <li class="border" id="email-border">
                             <input type="text" name="email" placeholder="mail@abc.com">
                         </li>
                         <label for="password">Password</label>
@@ -44,14 +44,13 @@
                     </div>
                     
                     <button class="login-btn" type="submit">Login</button>
-                    
-                    
                 </form>
+
+
                 <footer>
-                    <p class="not-registered">Not Registered Yet?<a href="#">Create an Account</a></p>
+                    <p class="footer-text">Not Registered Yet?<a href="#">Create an Account</a></p>
                 </footer>
             </div>
-            
         </aside>
     </div>
 
