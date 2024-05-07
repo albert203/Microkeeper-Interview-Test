@@ -2,23 +2,171 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Nunito Sans', sans-serif;
 }
 
-h1 {
-  margin-bottom: 20px;
+.outer-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+section{
+  height: 100vh;
+}
+
+img{
+  height: 100%;
+  object-fit: cover;
 }
 
 aside {
-  padding: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: solid 1px #000;
+  height: 100%;
+  width: 100%;
 }
 
-.span-container {
+.inner-container{
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  gap: 30px;
+  width: 70%;
+  height: 100%;
+  padding: 150px;
+  border: #000 1px solid;
 }
 
-.span {
+.cross-container{
   display: flex;
-  justify-content: end;
+  justify-content: flex-start;
+  width: 70%;
 }
 
+.text-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 70%;
+}
+
+.sub-text{
+  font-family: 'Nunito Sans', sans-serif;
+  color: #525252;
+}
+
+.form{
+  width: 80%;
+}
+
+.login-text{
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 700;
+  color: #525252;
+  font-size: 1.6em;
+
+}
+
+/* INPUT BORDER */
+.border{
+  padding: 13px 10px 13px 10px;
+  gap: 13px;
+  border: 1px solid #DED2D9;
+  border-radius: 5px;
+  opacity: 1;
+}
+
+.border:focus{
+  border: 1px solid #7F265B;
+  transition: 0.5s;
+}
+
+/* PLACEHOLDER TEXT */
+input::placeholder {
+  color: #E0E0E0;
+}
+
+
+/* INPUTS */
+input{
+    border: none;
+    outline: none;
+}
+
+input:active{
+  opacity: 1;
+  transition: ease-in;
+}
+
+/* LABELS TEXT FOR EACH INPUTS */
+label[for="email"], label[for="password"]{
+  font-family: 'Nunito Sans', sans-serif;
+  color: #828282;
+  font-size: 14px;
+}
+
+
+/* CHECKBOX */
+.remember-me{
+  accent-color: #7F265B;
+}
+
+/* REMEMBER ME TEXT */
+label[for="remember-me-text"]{
+  font-size: 12px;
+  color: #A1A1A1;
+}
+
+
+/* 'REMEMBER ME TEXT' AND 'FORGOT PASSWORD?' TEXT CONTAINER */
+.remember-me-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* FORGOT PASSWORD TEXT */
+.span a{
+  color: #7F265B;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* LOGIN BUTTON */
+.login-btn{
+  background-color: #7F265B;
+  font-size: 18px;
+  color: #fff;
+  width: 100%;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+
+/* Footer TEXT */
+.not-registered{
+  font-size: 18px;
+  color: #828282;
+  
+}
+
+.not-registered a{
+  color: #7F265B;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 10px;
+}
