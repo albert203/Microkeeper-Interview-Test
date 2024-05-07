@@ -15,35 +15,42 @@
 
 
         <aside class="aside-container">
-        <div class="text-container">
+            <div class="inner-container">
+                <div class="cross-container">
+                    <img src="cross.png" alt="logo">
+                </div>
+                <div class="text-container">
                     <h1 class="login-text">Login to your Account</h1>
-                    <p> See what is going on with your business</p>
+                    <p class="sub-text"> See what is going on with your business</p>
                 </div>
-            <form class="form" action="post">
-                
-                <ul class ="inputs-container" style="list-style-type: none; font-size:1em;">
-                    <label for="email">Email</label>
-                    <li class="border">
-                        <input type="text" name="email" placeholder="mail@abc.com">
-                    </li>
-                    <label for="password">Password</label>
-                    <li class="border">
-                        <input type="password" name="password" placeholder="Password">
-                    </li>
-                </ul>
-                
-                <div class="outer-checkbox-container">
-                    <div class="inner-checkbox-container">
-                        <input class="remember-me" type="checkbox" name="remember" id="remember" checked>
-                        <label for="remember">Remember me</label>
+                <form class="form" action="post">
+                    <ul class ="inputs-container" style="list-style-type: none; font-size:1em;">
+                        <label for="email">Email</label>
+                        <li class="border">
+                            <input type="text" name="email" placeholder="mail@abc.com">
+                        </li>
+                        <label for="password">Password</label>
+                        <li class="border">
+                            <input id="password" type="password" name="password" placeholder="Password">
+                        </li>
+                    </ul>
+                    
+                    <div class="remember-me-container">
+                        <div class="inner-checkbox-container">
+                            <input class="remember-me" type="checkbox" name="remember" id="remember" checked>
+                            <label for="remember-me-text">Remember Me</label>
+                        </div>
+                        <span class="span"><a href="#">Forgot password?</a></span>
                     </div>
-                    <span class="span"><a href="#">Forgot password?</a></span>
-                </div>
-                
-                <button class="login-btn" type="submit">Login</button>
-                
-                <p>Not Registered Yet?<a href="#">Create an Account</a></p>
-            </form>
+                    
+                    <button class="login-btn" type="submit">Login</button>
+                    
+                    
+                </form>
+                <footer>
+                    <p class="not-registered">Not Registered Yet?<a href="#">Create an Account</a></p>
+                </footer>
+            </div>
             
         </aside>
     </div>
