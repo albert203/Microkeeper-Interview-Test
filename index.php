@@ -46,7 +46,6 @@
                     <button class="login-btn" type="submit">Login</button>
                 </form>
 
-
                 <footer>
                     <p class="footer-text">Not Registered Yet?<a href="#">Create an Account</a></p>
                 </footer>
@@ -55,81 +54,91 @@
     </div>
 
     <?php
-        
+        // db connection
+        $host = 'localhost';
+        $dbname = 'mydatabase';
+        $dbusername = 'root';
+        $dbpassword = 'password';
 
-        // // // db connection
-        // // $host = 'localhost';
-        // // $dbname = 'mydatabase';
-        // // $dbusername = 'root';
-        // // $dbpassword = 'password';
+        try {
+            $dbo = new PDO("mysql:host=$host", $dbusername, $dbpassword);
+            $dbo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // // try {
-        // //     $dbo = new PDO("mysql:host=$host", $dbusername, $dbpassword);
-        // //     $dbo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e){
+            echo 'First Connection failed: ';
+            echo 'Connection failed: ' . $e->getMessage();
+        }
 
-        // // } catch (PDOException $e){
-        // //     echo 'First Connection failed: ';
-        // //     echo 'Connection failed: ' . $e->getMessage();
-        // // }
+        // Create a database using php
+        $queryDb = "CREATE DATABASE IF NOT exists mydatabase";
 
-        // // // Create a database using php
-        // // $queryDb = "CREATE DATABASE IF NOT exists mydatabase";
+        // Prepare to prevent SQL injection
+        $sqlDb = $dbo->prepare($queryDb);
 
-        // // // Prepare to prevent SQL injection
-        // // $sqlDb = $dbo->prepare($queryDb);
+        // Execute the query
+        $sqlDb->execute();
 
-        // // // Execute the query
-        // // $sqlDb->execute();
-
-        // // // Reconnect with the newly created mydatabase
-        // // $dbo = new PDO("mysql:host=$host;dbname=mydatabase", $dbusername, $dbpassword);
-        // // $dbo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // Reconnect with the newly created mydatabase
+        $dbo = new PDO("mysql:host=$host;dbname=mydatabase", $dbusername, $dbpassword);
+        $dbo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 
-        // // // Create a table
-        // // $queryTable = "CREATE TABLE IF NOT EXISTS users(
-        // //     id INT(6) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        // //     email VARCHAR(255) NOT NULL,
-        // //     password VARCHAR(255) NOT NULL,
-        // //     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        // // )";
+        // Create a table
+        $queryTable = "CREATE TABLE IF NOT EXISTS users(
+            id INT(6) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            email VARCHAR(255) NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
 
-        // // $sqlTable = $dbo->prepare($queryTable);
+        $sqlTable = $dbo->prepare($queryTable);
 
-        // // $sqlTable->execute();
+        $sqlTable->execute();
 
 
-        // // // Create three users
-        // // $queryUserOne= "INSERT INTO users (email, password) VALUES ('johndoe@gmail', 'john1234')";
-        // // $queryUserTwo= "INSERT INTO users (email, password) VALUES ('testuser@gmail.com', 'test1234')";
-        // // $queryUserThree= "INSERT INTO users (email, password) VALUES ('Janedoe@gmail.com', 'Jane1234')";
+        // Create three users
+        $queryUserOne= "INSERT INTO users (email, password) VALUES ('johndoe@gmail.com', 'john1234')";
+        $queryUserTwo= "INSERT INTO users (email, password) VALUES ('testuser@gmail.com', 'test1234')";
+        $queryUserThree= "INSERT INTO users (email, password) VALUES ('Janedoe@gmail.com', 'Jane1234')";
 
-        // // $users = [$queryUserOne, $queryUserTwo, $queryUserThree];
+        $users = [$queryUserOne, $queryUserTwo, $queryUserThree];
 
         
-        // // // need to also verify the user is not already in the database 
-        // // // to prevent duplication
-        // // foreach ($users as $user) {
-        // //     try{
-        // //         $userPrepared = $dbo->prepare($user);
-        // //         try{
-        // //             $userPrepared->execute();
-        // //         } catch(PDOException $e){
-        // //             echo "Error:execute users failed";
-        // //             echo $e->getMessage();
-        // //         }
-        // //     } catch(PDOException $e){
-        // //         echo "Error:prepare and execute users failed";
-        // //         echo $e->getMessage();
-        // //     }
-        // // }
+        // need to also verify the user is not already in the database 
+        // to prevent duplication
+
+        // loop through the users array and insert the data into the database
+        // verify the user is not already in the database
+        foreach ($users as $user) {
+            $email = explode("'", $user)[1];
+            $checkQuery = "SELECT * FROM users WHERE email = '$email'";
+            $checkResult = $dbo->prepare($checkQuery);
+            $checkResult->execute();
+          
+            if ($checkResult->rowCount() == 0) {
+              try {
+                $userPrepared = $dbo->prepare($user);
+                $userPrepared->execute();
+                echo '<div>';
+                echo '<p>' . $email . ' Created Successfully</p>';
+                echo '</div>';
+              } catch (PDOException $e) {
+                echo "user execute failed";
+                echo $e->getMessage();
+              }
+            } else {
+                echo '<div>';
+                echo '<p>' . $email . ' already exists!</p>';
+                echo '</div>';
+            }
+          }
         
-        // // // gets the form data
-        // // if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // //     $email = $_POST['email'];
-        // //     $password = $_POST['password'];
-        // //     echo $email;
-        // //     echo $password;
+        // // gets the form data
+        // if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        //     $email = $_POST['email'];
+        //     $password = $_POST['password'];
+        //     echo $email;
+        //     echo $password;
             
             
 
