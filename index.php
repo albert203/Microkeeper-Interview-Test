@@ -8,44 +8,43 @@
 </head>
 <body>
 
-    <div style="display: flex; justify-content: center; align-items: center;height: 100vh;">
+    <div class="outer-container">
         <section class="img-container">
             <img src="illustration.png" alt="logo">
         </section>
 
 
         <aside class="aside-container">
-            <h1 style="font-size: 2em;">Login to your Account</h1>
-            <p> See what is going on with your business</p>
-            <form action="post">
-                <ul style="list-style-type: none; font-size:1em;">
-                    <li>
-                        <label for="email">Email</label>
-                        <br>
+        <div class="text-container">
+                    <h1 class="login-text">Login to your Account</h1>
+                    <p> See what is going on with your business</p>
+                </div>
+            <form class="form" action="post">
+                
+                <ul class ="inputs-container" style="list-style-type: none; font-size:1em;">
+                    <label for="email">Email</label>
+                    <li class="border">
                         <input type="text" name="email" placeholder="mail@abc.com">
                     </li>
-                    <li>
-                        <label for="password">Password</label>
-                        <br>
+                    <label for="password">Password</label>
+                    <li class="border">
                         <input type="password" name="password" placeholder="Password">
                     </li>
                 </ul>
                 
-                <div>
-                    <div>
-                        <input type="checkbox" name="remember" id="remember">
+                <div class="outer-checkbox-container">
+                    <div class="inner-checkbox-container">
+                        <input class="remember-me" type="checkbox" name="remember" id="remember" checked>
                         <label for="remember">Remember me</label>
-                    
-                        <span class="span"><a href="#">Forgot password?</a></span>
                     </div>
+                    <span class="span"><a href="#">Forgot password?</a></span>
                 </div>
                 
-                <button style="color: white; padding: 5px 20px;background: purple; border-radius: 5px;" type="submit">Login</button>
+                <button class="login-btn" type="submit">Login</button>
+                
                 <p>Not Registered Yet?<a href="#">Create an Account</a></p>
             </form>
-
-            <br>
-            <button>logout</button>
+            
         </aside>
     </div>
 

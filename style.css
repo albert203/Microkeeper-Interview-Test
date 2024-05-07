@@ -4,21 +4,80 @@
   box-sizing: border-box;
 }
 
-h1 {
-  margin-bottom: 20px;
+
+
+.img-container{
+  
+} 
+
+.outer-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
 }
+
 
 aside {
-  padding: 100px;
+  padding: 300px;
   border: solid 1px #000;
+  height: 100vh;
+  margin: 300px;
 }
 
-.span-container {
-  display: flex;
+.login-text{
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 700;
+  line-height: 49.1px;
+
+  color: #525252;
+  font-size: 1.6em;
+  height: 49px;
 }
 
-.span {
-  display: flex;
-  justify-content: end;
+.border{
+  padding: 13px 10px 13px 10px;
+  gap: 13px;
+  border: 1px solid #DED2D9;
+  border-radius: 5px;
+  border: 1px 0px 0px 0px;
+  opacity: 0px;
+
 }
+
+input{
+  border: none;
+}
+
+input::placeholder {
+  color: #E0E0E0;
+}
+
+.login-btn{
+  color: #fff;
+  background-color: purple;
+  padding: 5px 20px;
+  border: #000 1px solid;
+  border-radius: 5px;
+  font-weight: 700;
+  width: 100px;
+}
+
+label[for="email"], label[for="password"]{
+  font-family: 'Nunito Sans', sans-serif;
+  color: #828282;
+  font-size: 14px;
+  height: 49px;
+}
+
+.checkbox-outer{
+  display: flex;
+  align-items: center;
+}
+
+.remember-me{
+  accent-color: purple;
+}
+
 
