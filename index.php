@@ -23,7 +23,7 @@
                     <h1 class="login-text">Login to your Account</h1>
                     <p class="sub-text"> See what is going on with your business</p>
                 </div>
-                <form class="form" action="post">
+                <form class="form" method="POST">
                     <ul class ="inputs-container" style="list-style-type: none; font-size:1em;">
                         <label for="email">Email</label>
                         <li class="border" id="email-border">
@@ -153,89 +153,102 @@
                 echo '</div>';
             }
           }
+
+
         
-        // gets the form data
+        // LOGIN, getting values and checking against the database
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // get values from the form
             $email = $_POST['email'];
             $password = $_POST['password'];
-            echo $email;
-            echo $password;
-            
-            // LOGIN 
-
-            // query to select the user email
-            $queryEmail = "SELECT * users WHERE ($email) = (:email)";
-            $queryPassword = "SELECT * users WHERE ($password) = (:password)";
-
-            $stmt = $dbo->prepare($query);
-
-            try {
-                $duplicateEmail = $stmt -> execute();
-            } catch (PDOException $e) {
-                header('Location: ../index.php');
+        
+            // query to search for the user in the db by email
+            $checkQuery = "SELECT * FROM users WHERE email = :email";
+            $result = $dbo->prepare($checkQuery);
+            $result->bindParam(':email', $email);
+            $result->execute();
+        
+            // check if the email exists
+            if ($result->rowCount() == 1) {
+                // get the user from the database
+                $user = $result->fetch();      
+                // echo 'Email exists: ' . $user['email'];
+                echo '<br>';
+        
+                try {
+                    // query to select the user with the given email and password
+                    $QueryDbUser = "SELECT * FROM users WHERE email = :email AND password = :password";
+                    $stmt = $dbo->prepare($QueryDbUser);
+                    $stmt->bindParam(':email', $email);
+                    $stmt->bindParam(':password', $user['password']); // bind the hashed password from the database
+                    $stmt->execute();
+        
+                    if ($stmt->rowCount() == 1) {
+                        // verify the password
+                        if (password_verify($password, $user['password'])) {
+                            echo 'Password is correct, Login Successful';
+                            header('Location: ./index.php');
+                            // CREATE THE LOGOUT BUTTON AND DESTROY USER WHEN CLICKED 
+                
+                        } else {
+                            echo 'Password is incorrect';
+                        }
+                    } else {
+                        echo 'Password is incorrect';
+                    }
+                } catch (PDOException $e) {
+                    echo 'user account query failed' . $e->getMessage();
+                }
+            } else {
                 echo 'Email does not exist';
             }
-
-
-
-
-            
-
-           
-
-            //ERROR HANDLING
-            $errors = [];
-
-            // I email is missing 
-            if (is_input_empty($email, $password)) {
-                $errors["empty_input"] = 'Email is required';
-            }
-
-            // If email is invalid
-            if (is_email_valid($email)){
-                $errors["invalid_email"] = 'Email is invalid';
-            }
-
-            if ($errors){
-                echo $_SESSION['errors'] = $errors;
-                header('Location: ../index.php');
-                die();
-            }
-
-
-            // PasswordVerification($password, $hashedpassword);
-
-        } else {
-            // header('Location: ../index.php');
-           echo "No data was sent";
         }
 
-        // When Login button is clicked, verify the password
-        function PasswordVerification($password, $hashedpassword){
-            // verify hashed password is correct, compares to database
-            $password = $_POST['password'];
-            if (password_verify($password, $hashedpassword)) {
-                echo 'Password is correct';
-            } else {
-                echo 'Password is incorrect';
-            }
-        }
 
-        function is_input_empty($email, $password){
-            if (empty($email) || empty($password)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
 
-        function is_email_valid($email){
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
+
+        //     //ERROR HANDLING
+        //     $errors = [];
+
+        //     // I email is missing 
+        //     if (is_input_empty($email, $password)) {
+        //         $errors["empty_input"] = 'Email is required';
+        //     }
+
+        //     // If email is invalid
+        //     if (is_email_valid($email)){
+        //         $errors["invalid_email"] = 'Email is invalid';
+        //     }
+
+        //     if ($errors){
+        //         echo $_SESSION['errors'] = $errors;
+        //         header('Location: ../index.php');
+        //         die();
+        //     }
+
+
+        //     // PasswordVerification($password, $hashedpassword);
+
+        // } else {
+        //     // header('Location: ../index.php');
+        //    echo "No data was sent";
+        // }
+
+
+        // function is_input_empty($email, $password){
+        //     if (empty($email) || empty($password)) {
+        //         return true;
+        //     } else {
+        //         return false;
+        //     }
+        // }
+
+        // function is_email_valid($email){
+        //     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        //         return true;
+        //     } else {
+        //         return false;
+        //     }
 
 ?>
 
