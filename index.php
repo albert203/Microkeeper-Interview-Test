@@ -105,7 +105,8 @@
         
         // hash the passwords
         function hashPassword($password, $user){
-            $hashedpassword = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
+            $santisedPassword = htmlspecialchars($password);
+            $hashedpassword = password_hash($santisedPassword, PASSWORD_BCRYPT, ['cost' => 12]);
             return $hashedpassword;
         }
         
@@ -115,7 +116,7 @@
         // verify the user is not already in the database
         foreach ($users as $user) {
             // check if the email is already in the database
-            $email = explode("'", $user)[1];
+            $email = htmlspecialchars(explode("'", $user)[1]);
             $checkQuery = "SELECT * FROM users WHERE email = '$email'";
             $checkResult = $dbo->prepare($checkQuery);
             $checkResult->execute();
@@ -159,9 +160,11 @@
         // LOGIN, getting values and checking against the database
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // get values from the form
-            $email = $_POST['email'];
-            $password = $_POST['password'];
-        
+            $email = htmlspecialchars($_POST['email']);
+            $password = htmlspecialchars($_POST['password']);
+            
+            
+            
             // query to search for the user in the db by email
             $checkQuery = "SELECT * FROM users WHERE email = :email";
             $result = $dbo->prepare($checkQuery);
@@ -200,55 +203,49 @@
                     echo 'user account query failed' . $e->getMessage();
                 }
             } else {
-                echo 'Email does not exist';
+                is_input_empty($email, $password);
+                is_email_valid($email);
             }
+        } else {
+            echo 'Post request failed';
+            
         }
 
 
 
+        //ERROR HANDLING
+        $errors = [];
 
-        //     //ERROR HANDLING
-        //     $errors = [];
+        if ($errors){
+            echo $_SESSION['errors'] = $errors;
+            header('Location: ../index.php');
+            die();
+        }
 
-        //     // I email is missing 
-        //     if (is_input_empty($email, $password)) {
-        //         $errors["empty_input"] = 'Email is required';
-        //     }
+        function is_input_empty($errors, $email, $password){
+            if (empty($email) && !empty($password)) {
+                array_push($errors,'Email is empty');
+                return true;
+            } else if (empty($password) && !empty($email)) {
+                array_push($errors,'Password is empty');
+                return true;
+            } else if (empty($email) && empty($password)) {
+                array_push($errors,'Email and Password is empty');
+                return true;
+            } else {
+                return false;
+            }
+        }
 
-        //     // If email is invalid
-        //     if (is_email_valid($email)){
-        //         $errors["invalid_email"] = 'Email is invalid';
-        //     }
-
-        //     if ($errors){
-        //         echo $_SESSION['errors'] = $errors;
-        //         header('Location: ../index.php');
-        //         die();
-        //     }
-
-
-        //     // PasswordVerification($password, $hashedpassword);
-
-        // } else {
-        //     // header('Location: ../index.php');
-        //    echo "No data was sent";
-        // }
-
-
-        // function is_input_empty($email, $password){
-        //     if (empty($email) || empty($password)) {
-        //         return true;
-        //     } else {
-        //         return false;
-        //     }
-        // }
-
-        // function is_email_valid($email){
-        //     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        //         return true;
-        //     } else {
-        //         return false;
-        //     }
+        // Check if the email is valid
+        function is_email_valid($email){
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                echo 'Email is invalid';
+                return true;
+            } else {
+                return false;
+            }
+        }
 
 ?>
 
