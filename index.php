@@ -23,7 +23,7 @@
                     <h1 class="login-text">Login to your Account</h1>
                     <p class="sub-text"> See what is going on with your business</p>
                 </div>
-                <form class="form" action="post">
+                <form class="form" method="POST">
                     <ul class ="inputs-container" style="list-style-type: none; font-size:1em;">
                         <label for="email">Email</label>
                         <li class="border" id="email-border">
@@ -46,7 +46,6 @@
                     <button class="login-btn" type="submit">Login</button>
                 </form>
 
-
                 <footer>
                     <p class="footer-text">Not Registered Yet?<a href="#">Create an Account</a></p>
                 </footer>
@@ -55,94 +54,158 @@
     </div>
 
     <?php
+        // db connection
+        $host = 'localhost';
+        $dbname = 'mydatabase';
+        $dbusername = 'root';
+        $dbpassword = 'password';
+
+        try {
+            $dbo = new PDO("mysql:host=$host", $dbusername, $dbpassword);
+            $dbo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        } catch (PDOException $e){
+            echo 'First Connection failed: ';
+            echo 'Connection failed: ' . $e->getMessage();
+        }
+
+        // Create a database using php
+        $queryDb = "CREATE DATABASE IF NOT exists mydatabase";
+
+        // Prepare to prevent SQL injection
+        $sqlDb = $dbo->prepare($queryDb);
+
+        // Execute the query
+        $sqlDb->execute();
+
+        // Reconnect with the newly created mydatabase
+        $dbo = new PDO("mysql:host=$host;dbname=mydatabase", $dbusername, $dbpassword);
+        $dbo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
+        // Create a table
+        $queryTable = "CREATE TABLE IF NOT EXISTS users(
+            id INT(6) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            email VARCHAR(255) NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+
+        $sqlTable = $dbo->prepare($queryTable);
+
+        $sqlTable->execute();
+
+
+        // Create three users
+        $queryUserOne= "INSERT INTO users (email, password) VALUES ('johndoe@gmail.com', 'john1234')";
+        $queryUserTwo= "INSERT INTO users (email, password) VALUES ('testuser@gmail.com', 'test1234')";
+        $queryUserThree= "INSERT INTO users (email, password) VALUES ('Janedoe@gmail.com', 'Jane1234')";
+        
+        $users = [$queryUserOne, $queryUserTwo, $queryUserThree];
+        
+        // hash the passwords
+        function hashPassword($password, $user){
+            $hashedpassword = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
+            return $hashedpassword;
+        }
         
 
-        // // // db connection
-        // // $host = 'localhost';
-        // // $dbname = 'mydatabase';
-        // // $dbusername = 'root';
-        // // $dbpassword = 'password';
 
-        // // try {
-        // //     $dbo = new PDO("mysql:host=$host", $dbusername, $dbpassword);
-        // //     $dbo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // loop through the users array and insert the data into the database
+        // verify the user is not already in the database
+        foreach ($users as $user) {
+            // check if the email is already in the database
+            $email = explode("'", $user)[1];
+            $checkQuery = "SELECT * FROM users WHERE email = '$email'";
+            $checkResult = $dbo->prepare($checkQuery);
+            $checkResult->execute();
 
-        // // } catch (PDOException $e){
-        // //     echo 'First Connection failed: ';
-        // //     echo 'Connection failed: ' . $e->getMessage();
-        // // }
-
-        // // // Create a database using php
-        // // $queryDb = "CREATE DATABASE IF NOT exists mydatabase";
-
-        // // // Prepare to prevent SQL injection
-        // // $sqlDb = $dbo->prepare($queryDb);
-
-        // // // Execute the query
-        // // $sqlDb->execute();
-
-        // // // Reconnect with the newly created mydatabase
-        // // $dbo = new PDO("mysql:host=$host;dbname=mydatabase", $dbusername, $dbpassword);
-        // // $dbo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-
-        // // // Create a table
-        // // $queryTable = "CREATE TABLE IF NOT EXISTS users(
-        // //     id INT(6) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        // //     email VARCHAR(255) NOT NULL,
-        // //     password VARCHAR(255) NOT NULL,
-        // //     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        // // )";
-
-        // // $sqlTable = $dbo->prepare($queryTable);
-
-        // // $sqlTable->execute();
-
-
-        // // // Create three users
-        // // $queryUserOne= "INSERT INTO users (email, password) VALUES ('johndoe@gmail', 'john1234')";
-        // // $queryUserTwo= "INSERT INTO users (email, password) VALUES ('testuser@gmail.com', 'test1234')";
-        // // $queryUserThree= "INSERT INTO users (email, password) VALUES ('Janedoe@gmail.com', 'Jane1234')";
-
-        // // $users = [$queryUserOne, $queryUserTwo, $queryUserThree];
-
-        
-        // // // need to also verify the user is not already in the database 
-        // // // to prevent duplication
-        // // foreach ($users as $user) {
-        // //     try{
-        // //         $userPrepared = $dbo->prepare($user);
-        // //         try{
-        // //             $userPrepared->execute();
-        // //         } catch(PDOException $e){
-        // //             echo "Error:execute users failed";
-        // //             echo $e->getMessage();
-        // //         }
-        // //     } catch(PDOException $e){
-        // //         echo "Error:prepare and execute users failed";
-        // //         echo $e->getMessage();
-        // //     }
-        // // }
-        
-        // // // gets the form data
-        // // if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // //     $email = $_POST['email'];
-        // //     $password = $_POST['password'];
-        // //     echo $email;
-        // //     echo $password;
             
-            
+            // If the email is not in the database, hash the password and insert the user
+            if ($checkResult->rowCount() == 0) {
+              try {   
+                // explode the password from the user (not in db)
+                $password = explode("'", $user)[3];
+                echo $password;
+                echo '<br>';
 
-        //     // Create User, Insert the data into the database
+                // Hash the password
+                $hashedpassword = hashPassword($password, $user);
+                echo $hashedpassword;
 
-        //     $query = "INSERT INTO  users ($email, $password) VALUES (:email, :password)";
-        //     $stmt = $dbo->prepare($query);
+                // Bind the parameters
+                $sql = "INSERT INTO users (email, password) VALUES (:email, :password)";
+                $stmt = $dbo->prepare($sql);
+                $stmt-> bindParam(':email', $email);
+                $stmt-> bindParam(':password', $hashedpassword);
+                $stmt -> execute();
 
-        //     // hash the password
-        //     $hashedpassword = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
-        //     $stmt -> bindParam(':email', $email);
-        //     $stmt -> bindParam(':password', $hashedpassword);
-        //     $stmt -> execute();
+                echo '<div>';
+                echo '<p>' . $email . ' Created Successfully</p>';
+                echo '</div>';
+              } catch (PDOException $e) {
+                echo "user execute failed";
+                echo $e->getMessage();
+              }
+            } else {
+                echo '<div>';
+                echo '<p>' . $email . ' already exists!</p>';
+                echo '</div>';
+            }
+          }
+
+
+        
+        // LOGIN, getting values and checking against the database
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // get values from the form
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+        
+            // query to search for the user in the db by email
+            $checkQuery = "SELECT * FROM users WHERE email = :email";
+            $result = $dbo->prepare($checkQuery);
+            $result->bindParam(':email', $email);
+            $result->execute();
+        
+            // check if the email exists
+            if ($result->rowCount() == 1) {
+                // get the user from the database
+                $user = $result->fetch();      
+                // echo 'Email exists: ' . $user['email'];
+                echo '<br>';
+        
+                try {
+                    // query to select the user with the given email and password
+                    $QueryDbUser = "SELECT * FROM users WHERE email = :email AND password = :password";
+                    $stmt = $dbo->prepare($QueryDbUser);
+                    $stmt->bindParam(':email', $email);
+                    $stmt->bindParam(':password', $user['password']); // bind the hashed password from the database
+                    $stmt->execute();
+        
+                    if ($stmt->rowCount() == 1) {
+                        // verify the password
+                        if (password_verify($password, $user['password'])) {
+                            echo 'Password is correct, Login Successful';
+                            header('Location: ./index.php');
+                            // CREATE THE LOGOUT BUTTON AND DESTROY USER WHEN CLICKED 
+                
+                        } else {
+                            echo 'Password is incorrect';
+                        }
+                    } else {
+                        echo 'Password is incorrect';
+                    }
+                } catch (PDOException $e) {
+                    echo 'user account query failed' . $e->getMessage();
+                }
+            } else {
+                echo 'Email does not exist';
+            }
+        }
+
+
+
 
         //     //ERROR HANDLING
         //     $errors = [];
@@ -166,21 +229,11 @@
 
         //     // PasswordVerification($password, $hashedpassword);
 
-        // // } else {
-        // //     // header('Location: ../index.php');
-        // //    echo "No data was sent";
-        // // }
-
-        // // When Login button is clicked, verify the password
-        // function PasswordVerification($password, $hashedpassword){
-        //     // verify hashed password is correct, compares to database
-        //     $password = $_POST['password'];
-        //     if (password_verify($password, $hashedpassword)) {
-        //         echo 'Password is correct';
-        //     } else {
-        //         echo 'Password is incorrect';
-        //     }
+        // } else {
+        //     // header('Location: ../index.php');
+        //    echo "No data was sent";
         // }
+
 
         // function is_input_empty($email, $password){
         //     if (empty($email) || empty($password)) {
@@ -196,7 +249,6 @@
         //     } else {
         //         return false;
         //     }
-        // }
 
 ?>
 
