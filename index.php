@@ -1,3 +1,54 @@
+<?php
+    session_start();
+
+    // // Logout process
+    // if (isset($_GET['logout'])) {
+    //     echo $_SESSION['user_id'];
+    //     // Unset all session variables
+
+    //     session_unset();
+
+    //     // Destroy the session
+    //     session_destroy();
+    //     echo $_SESSION['user_id'];
+        
+
+    //     // Redirect to the index page
+    //     header('Location: ' . $_SERVER['PHP_SELF']);
+    //     echo 'Logged out';
+    //     // test echo that the user is logged out
+    //     echo '<br>';
+    //     echo 'User id: ' . $_SESSION['user_id'];
+    //     echo '<br>';
+    //     exit();
+    // }
+
+    //ERROR HANDLING
+        if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+            $errors = [];
+
+        if (is_input_empty($email, $password)){
+            $errors["empty_input"] = "Fill in all fields!";
+        }
+        if (is_email_invalid($email)){
+            $errors["invalid_email"] = "Invalid email used!";
+        }
+
+        if ($errors) {
+            $_SESSION["errors_login"] = $errors;
+            // header("Location: ./index.php");
+            // die();
+        }
+    }
+
+    
+
+    
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,14 +61,14 @@
 
     <div class="outer-container">
         <section class="img-container">
-            <img src="illustration.png" alt="logo">
+            <img src="./img/illustration.png" alt="logo">
         </section>
 
 
         <aside class="aside-container">
             <div class="inner-container">
                 <div class="cross-container">
-                    <img src="cross.png" alt="logo">
+                    <img src="img/cross.png" alt="logo">
                 </div>
                 <div class="text-container">
                     <h1 class="login-text">Login to your Account</h1>
@@ -44,11 +95,17 @@
                     </div>
                     
                     <button class="login-btn" type="submit">Login</button>
+
+                    <!-- <div id="btn-container"></div> -->
                 </form>
 
                 <footer>
                     <p class="footer-text">Not Registered Yet?<a href="#">Create an Account</a></p>
                 </footer>
+                <?php
+                    display_login_errors();
+                ?>
+                <script src="script.js"></script>
             </div>
         </aside>
     </div>
@@ -190,8 +247,29 @@
                         // verify the password
                         if (password_verify($password, $user['password'])) {
                             echo 'Password is correct, Login Successful';
-                            header('Location: ./index.php');
+                            
+
+                            // CREATE A SESSION FOR THE USER
+                            // retrieve the user id and email
+                            $user_id = $user['id'];
+                            echo "<br><p>user id: $user_id </p>";
+                            $_SESSION['user_id'] = $user_id; 
+                            $_SESSION['email'] = $email; 
+
+                            
+                            // Redirect to the account page
+                            header('Location: ./account.php');
+                            exit();
+
+                            // Script to Create a logout button
+
+                            
+                            
+                            // session_destroy();
+
+                            
                             // CREATE THE LOGOUT BUTTON AND DESTROY USER WHEN CLICKED 
+
                 
                         } else {
                             echo 'Password is incorrect';
@@ -203,8 +281,7 @@
                     echo 'user account query failed' . $e->getMessage();
                 }
             } else {
-                is_input_empty($email, $password);
-                is_email_valid($email);
+                // echo $errors;
             }
         } else {
             echo 'Post request failed';
@@ -213,40 +290,54 @@
 
 
 
-        //ERROR HANDLING
-        $errors = [];
 
-        if ($errors){
-            echo $_SESSION['errors'] = $errors;
-            header('Location: ../index.php');
-            die();
-        }
-
-        function is_input_empty($errors, $email, $password){
-            if (empty($email) && !empty($password)) {
-                array_push($errors,'Email is empty');
-                return true;
-            } else if (empty($password) && !empty($email)) {
-                array_push($errors,'Password is empty');
-                return true;
-            } else if (empty($email) && empty($password)) {
-                array_push($errors,'Email and Password is empty');
+        // ERROR HANDLING FUNCTIONS
+        // check if the input fields are empty
+        function is_input_empty($email, $password){
+            if(empty($email) || empty($password)){
                 return true;
             } else {
                 return false;
             }
         }
 
-        // Check if the email is valid
-        function is_email_valid($email){
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                echo 'Email is invalid';
+        // check if the email is invalid
+        function is_email_invalid($email){
+            if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
                 return true;
             } else {
                 return false;
             }
         }
 
+        // display the errors in the login form
+        function display_login_errors() {
+            if (isset($_SESSION["errors_login"])) {
+                $errors = $_SESSION["errors_login"];
+            
+                foreach ($errors as $error) {
+                echo "<p style='color:red; text-transform:uppercase;'>" . $error . "</p>";
+                }
+            
+                unset($_SESSION["errors_login"]);
+            }
+        }
+
+        function incorrect_password($email, $password, $user){
+            if (!password_verify($password, $user['password'])) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
+        
+
+// ... other code
+
+
+        
 ?>
 
     
