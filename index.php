@@ -1,5 +1,5 @@
 <?php
-    session_start();
+   
 
     // // Logout process
     // if (isset($_GET['logout'])) {
@@ -22,6 +22,44 @@
     //     echo '<br>';
     //     exit();
     // }
+
+    
+
+    // Create the cookies configuration for security,
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.cookie_secure', 1);
+
+    session_set_cookie_params([
+        'lifetime' => 1800,
+        'path' => '/',
+        'domain' => $_SERVER['HTTP_HOST'],
+        'secure' => true,
+        'httponly' => true,
+    ]);
+
+    session_start();
+
+    if (!isset($_SESSION["last_regeneration"])){
+        regenerate_session_id();
+
+    } else{
+        $interval = 60 * 30;
+        if (time() - $_SESSION["last_regeneration"] >= $interval){
+            regenerate_session_id();
+        }
+    }
+
+    function regenerate_session_id(){
+        session_regenerate_id(true);
+        $_SESSION["last_regeneration"] = time();
+    }
+
+    // Brute force attack prevention
+    if (!isset($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = 0;
+    }
+
+
 
     //ERROR HANDLING
         if ($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -206,20 +244,25 @@
                 echo $e->getMessage();
               }
             } else {
-                echo '<div>';
-                echo '<p>' . $email . ' already exists!</p>';
-                echo '</div>';
+                // echo '<div>';
+                // echo '<p>' . $email . ' already exists!</p>';
+                // echo '</div>';
             }
           }
 
 
         
         // LOGIN, getting values and checking against the database
+
+        
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (!isset($_SESSION['login_locked'])) {
+
+            $login_successful = false;
             // get values from the form
             $email = htmlspecialchars($_POST['email']);
             $password = htmlspecialchars($_POST['password']);
-            
             
             
             // query to search for the user in the db by email
@@ -246,48 +289,86 @@
                     if ($stmt->rowCount() == 1) {
                         // verify the password
                         if (password_verify($password, $user['password'])) {
-                            echo 'Password is correct, Login Successful';
                             
-
+                            echo 'Password is correct, Login Successful';
+                            $login_successful = true;
+                            
+                            
                             // CREATE A SESSION FOR THE USER
                             // retrieve the user id and email
                             $user_id = $user['id'];
-                            echo "<br><p>user id: $user_id </p>";
                             $_SESSION['user_id'] = $user_id; 
                             $_SESSION['email'] = $email; 
 
-                            
+                            echo "<br><p>user id: $user_id </p>";
                             // Redirect to the account page
                             header('Location: ./account.php');
                             exit();
-
-                            // Script to Create a logout button
-
                             
-                            
-                            // session_destroy();
-
-                            
-                            // CREATE THE LOGOUT BUTTON AND DESTROY USER WHEN CLICKED 
-
-                
                         } else {
+                            $login_successful = false;
                             echo 'Password is incorrect';
                         }
                     } else {
+                        $login_successful = false;
                         echo 'Password is incorrect';
                     }
                 } catch (PDOException $e) {
+                    $login_successful = false;
                     echo 'user account query failed' . $e->getMessage();
                 }
             } else {
+                $login_successful = false;
+                echo $_SESSION['login_attempts'];
                 // echo $errors;
             }
-        } else {
-            echo 'Post request failed';
-            
         }
 
+            if (!$login_successful) {
+                // Increment the login attempts if the login is not successful
+                $_SESSION['login_attempts']++;
+              
+                // Lock the account after 5 attempts
+                if ($_SESSION['login_attempts'] >= 5) {
+                    // Lock the account for 20 seconds
+                    $lockoutInterval = 20; 
+                    if (!isset($_SESSION['last_login_attempt'])){
+                        $_SESSION['last_login_attempt'] = time();
+                    }
+                    
+                    $_SESSION['login_locked'] = true;
+                    // If locked after 5 attepmpts, lock the account for 20 seconds
+                    if (isset($_SESSION['login_locked'])) {
+                        // when time difference  hits 20 seconds, unlock the account
+                        $timeDifference = time() - $_SESSION['last_login_attempt'];
+
+                        // echo  $timeDifference;
+                        // tells user feedback how long locked out for
+                        $_SESSION['lockedOutTime'] =  $lockoutInterval - $timeDifference;
+
+                        if ($timeDifference <= $lockoutInterval) {
+                            echo "<br>To many incorrect login attempts. Account locked for " . $_SESSION['lockedOutTime'] . " seconds";
+                            // exit();
+                        } else{
+                            echo 'Account login is now unlocked, please login';
+                            // unlock the account, reset the login attempts, and time of last login attempt
+                            unset($_SESSION['login_locked']);
+                            unset ($_SESSION['last_login_attempt']);
+                            $_SESSION['login_attempts'] = 0;
+                        }
+                    }
+                    exit();
+                }
+            } else {
+                // Login successful, reset attempts
+                $_SESSION['login_attempts'] = 0;
+            }
+        } else {
+            // echo 'Post request failed';
+        }
+
+        // if login is not successful, increment the login attempts
+        
 
 
 
@@ -323,25 +404,7 @@
             }
         }
 
-        function incorrect_password($email, $password, $user){
-            if (!password_verify($password, $user['password'])) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-
-        
-
-// ... other code
-
-
-        
 ?>
-
-    
-    
 
 </body>
 </html>

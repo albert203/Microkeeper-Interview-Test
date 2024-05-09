@@ -1,3 +1,7 @@
+<?php
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +12,8 @@
 <body>
     <h1>Welcome to your account</h1>
     <?php
-        session_start();
         if(isset($_SESSION['email'])){
-            echo "Hello, ".$_SESSION['email'];
+            echo "Hello, ".$_SESSION['email']. " your user id is ". $_SESSION['user_id']; //
         }else{
             echo "error";
         }   
