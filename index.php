@@ -98,6 +98,7 @@
 <body>
 
     <div class="outer-container">
+        
         <section class="img-container">
             <img src="./img/illustration.png" alt="logo">
         </section>

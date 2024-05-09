@@ -17,17 +17,22 @@ section {
   height: 100vh;
 }
 
-img {
-  height: 100%;
-  object-fit: cover;
+.image-container img {
+  flex: 0 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.img-container {
+  display: flex;
 }
 
 aside {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  width: 100%;
+  max-width: 100%;
+  height: auto;
   /* border: solid 1px #000; */
 }
 
@@ -178,6 +183,4 @@ footer {
   text-decoration: none;
   font-weight: 600;
   margin-left: 10px;
-  
 }
-
