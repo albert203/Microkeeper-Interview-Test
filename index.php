@@ -2,28 +2,27 @@
    
 
     // // Logout process
-    // if (isset($_GET['logout'])) {
-    //     echo $_SESSION['user_id'];
-    //     // Unset all session variables
+    if (isset($_GET['logout'])) {
+        echo $_SESSION['user_id'];
+        // Unset all session variables
 
-    //     session_unset();
+        session_unset();
 
-    //     // Destroy the session
-    //     session_destroy();
-    //     echo $_SESSION['user_id'];
+        // Destroy the session
+        session_destroy();
+        echo $_SESSION['user_id'];
         
 
-    //     // Redirect to the index page
-    //     header('Location: ' . $_SERVER['PHP_SELF']);
-    //     echo 'Logged out';
-    //     // test echo that the user is logged out
-    //     echo '<br>';
-    //     echo 'User id: ' . $_SESSION['user_id'];
-    //     echo '<br>';
-    //     exit();
-    // }
+        // Redirect to the index page
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        echo 'Logged out';
+        // test echo that the user is logged out
+        echo '<br>';
+        echo 'User id: ' . $_SESSION['user_id'];
+        echo '<br>';
+        exit();
+    }
 
-    
 
     // Create the cookies configuration for security,
     ini_set('session.cookie_httponly', 1);
@@ -80,11 +79,7 @@
             // header("Location: ./index.php");
             // die();
         }
-    }
-
-    
-
-    
+    } 
 ?>
 
 <!DOCTYPE html>
@@ -94,59 +89,315 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css"/>
+    
+    <style>
+        * {
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Nunito Sans', sans-serif;
+        margin: 0;
+        }
+
+        .outer-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100%;
+        }
+
+        section {
+        height: 100vh;
+        }
+
+        .img-container img {
+        object-fit: cover;
+        max-width: 100%;
+        height: auto;
+        }
+
+        .img-container {
+        display: flex;
+        }
+
+        aside {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 70%;
+        height: auto;
+        }
+
+        .inner-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+        gap: 30px;
+        width: 70%;
+        height: 100%;
+        padding: 50px;
+        }
+
+        .cross-container {
+        display: flex;
+        justify-content: flex-start;
+        width: 100%;
+        }
+
+        .text-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        }
+
+        .sub-text {
+        font-family: 'Nunito Sans', sans-serif;
+        color: #525252;
+        }
+
+        .form {
+        width: 90%;
+        }
+
+        .inputs-container {
+        list-style-type: none;
+        font-size: 1em;
+        }
+
+        .login-text {
+        font-family: 'Nunito Sans', sans-serif;
+        font-weight: 700;
+        color: #525252;
+        font-size: 1.6em;
+        }
+
+        .border {
+        padding: 13px 10px;
+        gap: 13px;
+        border: 1px solid #ded2d9;
+        border-radius: 5px;
+        opacity: 1;
+        }
+
+        #email-border {
+        margin-bottom: 15px;
+        }
+
+        .border:focus {
+        border: 1px solid #7f265b;
+        transition: 0.5s;
+        }
+
+        input::placeholder {
+        color: #e0e0e0;
+        }
+
+        input {
+        border: none;
+        outline: none;
+        }
+
+        input:active {
+        opacity: 1;
+        transition: ease-in;
+        }
+
+        label[for='email'],
+        label[for='password'] {
+        font-family: 'Nunito Sans', sans-serif;
+        color: #828282;
+        font-size: 14px;
+        }
+
+        .remember-me {
+        accent-color: #7f265b;
+        }
+
+        label[for='remember-me-text'] {
+        font-size: 12px;
+        color: #a1a1a1;
+        }
+
+        .remember-me-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0 20px;
+        }
+
+        .span a {
+        color: #7f265b;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+        }
+
+        .login-btn {
+        background-color: #7f265b;
+        font-size: 18px;
+        color: #fff;
+        width: 100%;
+        padding: 15px 20px;
+        border: none;
+        border-radius: 5px;
+        font-weight: 700;
+        cursor: pointer;
+        }
+
+        footer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        }
+
+        .footer-text {
+        font-size: 18px;
+        color: #828282;
+        }
+
+        .footer-text a {
+        color: #7f265b;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 10px;
+        }
+
+        @media (max-width: 1600px) {
+        /* Styles for screens up to 1600px */
+        }
+
+        @media (max-width: 1200px) {
+        /* Styles for screens up to 1200px */
+        }
+
+        @media (max-width: 992px) {
+        .outer-container {
+            flex-direction: column;
+            height: auto;
+        }
+
+        .img-container {
+            height: 50vh;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        aside {
+            width: 100%;
+            padding: 20px;
+        }
+
+        .inner-container {
+            width: 100%;
+            padding: 20px;
+        }
+        }
+
+        @media (max-width: 768px) {
+        .img-container {
+            height: 30vh;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .inner-container {
+            gap: 20px;
+        }
+
+        .login-text {
+            font-size: 1.2em;
+        }
+
+        .form {
+            width: 100%;
+        }
+
+        .border {
+            padding: 10px;
+        }
+
+        .remember-me-container {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .login-btn {
+            font-size: 16px;
+            padding: 12px 16px;
+        }
+
+        .footer-text {
+            font-size: 16px;
+        }
+        }
+    </style>
+
 </head>
 <body>
 
     <div class="outer-container">
-        
-        <section class="img-container">
-            <img src="./img/illustration.png" alt="logo">
-        </section>
+    <section class="img-container">
+        <img src="./img/illustration.png" alt="logo">
+    </section>
 
+    <aside class="aside-container">
+        <div class="inner-container">
 
-        <aside class="aside-container">
-            <div class="inner-container">
-                <div class="cross-container">
-                    <img src="img/cross.png" alt="logo">
+        <div class="cross-container">
+            <img src="img/cross.png" alt="logo">
+        </div>
+
+        <div class="text-container">
+            <h1 class="login-text">Login to your Account</h1>
+            <p class="sub-text">See what is going on with your business</p>
+        </div>
+
+        <form class="form" method="POST">
+            <ul class="inputs-container">
+                <label for="email">Email</label>
+                <li class="border" id="email-border">
+                    <input type="text" name="email" placeholder="mail@abc.com">
+                </li>
+
+                <label for="password">Password</label>
+                <li class="border">
+                    <input id="password" type="password" name="password" placeholder="Password">
+                </li>
+            </ul>
+            <div class="remember-me-container">
+                <div class="inner-checkbox-container">
+                    <input class="remember-me" type="checkbox" name="remember" id="remember" checked>
+                    <label for="remember-me-text">Remember Me</label>
                 </div>
-                <div class="text-container">
-                    <h1 class="login-text">Login to your Account</h1>
-                    <p class="sub-text"> See what is going on with your business</p>
-                </div>
-                <form class="form" method="POST">
-                    <ul class ="inputs-container" style="list-style-type: none; font-size:1em;">
-                        <label for="email">Email</label>
-                        <li class="border" id="email-border">
-                            <input type="text" name="email" placeholder="mail@abc.com">
-                        </li>
-                        <label for="password">Password</label>
-                        <li class="border">
-                            <input id="password" type="password" name="password" placeholder="Password">
-                        </li>
-                    </ul>
-                    
-                    <div class="remember-me-container">
-                        <div class="inner-checkbox-container">
-                            <input class="remember-me" type="checkbox" name="remember" id="remember" checked>
-                            <label for="remember-me-text">Remember Me</label>
-                        </div>
-                        <span class="span"><a href="#">Forgot password?</a></span>
-                    </div>
-                    
-                    <button class="login-btn" type="submit">Login</button>
-
-                    <!-- <div id="btn-container"></div> -->
-                </form>
-
-                <footer>
-                    <p class="footer-text">Not Registered Yet?<a href="#">Create an Account</a></p>
-                </footer>
-                <?php
-                    display_login_errors();
-                ?>
-                <script src="script.js"></script>
+                <span class="span"><a href="#">Forgot password?</a></span>
             </div>
-        </aside>
+            <button class="login-btn" type="submit">Login</button>
+        </form>
+
+        <footer>
+            <p class="footer-text">Not Registered Yet?<a href="#">Create an Account</a></p>
+        </footer>
+        
+        <?php display_login_errors(); ?>
+        <script src="script.js"></script>
+        </div>
+    </aside>
     </div>
 
     <?php
@@ -154,7 +405,8 @@
         $host = 'localhost';
         $dbname = 'mydatabase';
         $dbusername = 'root';
-        $dbpassword = 'password';
+        $dbpassword = '';
+        // $dbpassword = 'password';
 
         try {
             $dbo = new PDO("mysql:host=$host", $dbusername, $dbpassword);
@@ -206,8 +458,6 @@
             return $hashedpassword;
         }
         
-
-
         // loop through the users array and insert the data into the database
         // verify the user is not already in the database
         foreach ($users as $user) {
@@ -250,13 +500,8 @@
                 // echo '</div>';
             }
           }
-
-
         
-        // LOGIN, getting values and checking against the database
-
-        
-        
+        // LOGIN  
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_SESSION['login_locked'])) {
 
@@ -320,7 +565,7 @@
                 }
             } else {
                 $login_successful = false;
-                echo $_SESSION['login_attempts'];
+                echo "Unsuccessful Login Attempts: " . $_SESSION['login_attempts'] + 1 . "<br>";
                 // echo $errors;
             }
         }
@@ -368,11 +613,6 @@
             // echo 'Post request failed';
         }
 
-        // if login is not successful, increment the login attempts
-        
-
-
-
         // ERROR HANDLING FUNCTIONS
         // check if the input fields are empty
         function is_input_empty($email, $password){
@@ -404,7 +644,6 @@
                 unset($_SESSION["errors_login"]);
             }
         }
-
 ?>
 
 </body>
